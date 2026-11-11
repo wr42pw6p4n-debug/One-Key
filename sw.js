@@ -4,7 +4,7 @@ self.addEventListener('install', function(){ self.skipWaiting(); });
 self.addEventListener('activate', function(e){ e.waitUntil(self.clients.claim()); });
 self.addEventListener('push', function(e){
   e.waitUntil(self.registration.showNotification('Key App', {
-    body: 'Something needs attention - an urgent parts order may be waiting in KEPO.',
+    body: 'New request waiting - an urgent parts order or a quote request. Open Key App.',
     icon: 'icon-180.png', tag: 'ke-po', renotify: true
   }));
 });
