@@ -4,7 +4,7 @@ self.addEventListener('install', function(){ self.skipWaiting(); });
 self.addEventListener('activate', function(e){ e.waitUntil(self.clients.claim()); });
 self.addEventListener('push', function(e){
   e.waitUntil(self.registration.showNotification('Key App', {
-    body: 'New request waiting - an urgent parts order or a quote request. Open Key App.',
+    body: 'You have something new in Key App - open it to see what needs doing.',
     icon: 'icon-180.png', tag: 'ke-po', renotify: true
   }));
 });
