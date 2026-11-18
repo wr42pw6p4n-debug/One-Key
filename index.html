@@ -29,6 +29,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
 .tab .ti{font-size:15px;line-height:1}
 .tab.active{background:linear-gradient(180deg,#2a85cf,#1769aa);border-color:#2a85cf;color:#fff;box-shadow:0 2px 10px rgba(23,105,170,.55)}
 .tab:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tab.hide{display:none}
+.sub{position:fixed;left:0;right:0;z-index:4;background:#1d2d39;display:none;gap:6px;padding:5px 10px;border-bottom:1px solid #2f4352}
+.sub.on{display:flex}
+.sub button{flex:1;max-width:200px;border:1px solid #2f4352;background:#22333f;color:#9fb0bc;border-radius:8px;padding:6px 10px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+.sub button.active{background:#1769aa;border-color:#2a85cf;color:#fff}
 .stage{position:fixed;left:0;right:0;bottom:0;top:var(--barh,56px);background:#eef1f4}
 .frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#eef1f4}
 .hidden{display:none}
@@ -65,8 +70,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-app="home" data-name="Home" id="t-home"><span class="ti">🏠</span><span class="tl">Home</span></button><button class="tab" role="tab" data-app="job" data-name="Job Sheet" id="t-job"><span class="ti">📋</span><span class="tl">Job Sheet</span></button><button class="tab" role="tab" data-app="kepo" data-name="KEPO" id="t-kepo"><span class="ti">🧾</span><span class="tl">KEPO</span></button><button class="tab" role="tab" data-app="service" data-name="Service" id="t-service"><span class="ti">🛠️</span><span class="tl">Service</span></button><button class="tab" role="tab" data-app="parts" data-name="Parts List" id="t-parts"><span class="ti">🔩</span><span class="tl">Parts List</span></button><button class="tab" role="tab" data-app="quote" data-name="Quote" id="t-quote"><span class="ti">💬</span><span class="tl">Quote</span></button><button class="tab" role="tab" data-app="ra" data-name="Risk Assess" id="t-ra"><span class="ti">⚠️</span><span class="tl">Risk Assess</span></button><button class="tab" role="tab" data-app="lt" data-name="Load Test" id="t-lt"><span class="ti">📏</span><span class="tl">Load Test</span></button><button class="tab" role="tab" data-app="jobs" data-name="My Jobs" id="t-jobs"><span class="ti">📅</span><span class="tl">My Jobs</span></button></div>
   <button class="bell hidden" id="acct" aria-label="Account">👤</button>
   <button class="bell hidden" id="bell" title="Urgent order alerts on this device" aria-label="Urgent order alerts">🔔</button>
-  <div class="ver" id="ver">v2026.11.18-0727</div>
+  <div class="ver" id="ver">v2026.11.18-0842</div>
 </div>
+<div class="sub" id="sub"><button data-s="kepo">🧾 Orders / PO</button><button data-s="quote">💬 Quotes</button></div>
 <div class="upd hidden" id="upd" role="status"><span>A new version of Key App is ready.</span><button id="updBtn">Update now</button><button id="updX" aria-label="Dismiss" style="margin-left:0;background:transparent;color:#fff;font-size:18px;padding:4px 8px">&times;</button></div>
 <div class="login hidden" id="login" role="dialog" aria-label="Sign in">
   <form class="lbox" id="loginForm" autocomplete="on">
@@ -107,14 +113,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
   }
   function sizeStage(){
     var h=document.getElementById('bar').offsetHeight;
+    var sb=document.getElementById('sub');sb.style.top=h+'px';
+    if(sb.classList.contains('on'))h+=sb.offsetHeight;
     document.getElementById('stage').style.setProperty('--barh',h+'px');
   }
   function show(id,fromHash){
     if(APPS.indexOf(id)<0)id='home';
+    var grp=(id==='kepo'||id==='quote');
+    document.getElementById('sub').classList.toggle('on',grp);
+    Array.prototype.forEach.call(document.querySelectorAll('#sub button'),function(b){b.classList.toggle('active',b.getAttribute('data-s')===id)});
     sizeStage();
     APPS.forEach(function(a){
-      document.getElementById('t-'+a).classList.toggle('active',a===id);
-      document.getElementById('t-'+a).setAttribute('aria-selected',a===id?'true':'false');
+      var on=(a===id)||(a==='kepo'&&id==='quote');
+      document.getElementById('t-'+a).classList.toggle('active',on);
+      document.getElementById('t-'+a).setAttribute('aria-selected',on?'true':'false');
       document.getElementById('f-'+a).classList.toggle('hidden',a!==id);
     });
     var f=document.getElementById('f-'+id);
@@ -133,14 +145,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
     document.title='Key App — '+document.getElementById('t-'+id).getAttribute('data-name');
     try{if(f.getAttribute('data-loaded')==='1')f.contentWindow.postMessage({type:'keapp:shown'},'*')}catch(x){}
   }
+  document.getElementById('t-quote').classList.add('hide');
   APPS.forEach(function(a){document.getElementById('t-'+a).addEventListener('click',function(){show(a)})});
+  Array.prototype.forEach.call(document.querySelectorAll('#sub button'),function(b){b.addEventListener('click',function(){show(b.getAttribute('data-s'))})});
   window.addEventListener('hashchange',function(){var h=location.hash.replace('#','');if(h&&h!==current)show(h,true)});
   window.addEventListener('resize',sizeStage);
   var start=location.hash.replace('#','');
   show(start||'home');
 
   /* ---------- version check ---------- */
-  var BUILD="2026.11.18-0727";
+  var BUILD="2026.11.18-0842";
   var newBuild='';
   function checkVersion(){
     fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
