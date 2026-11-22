@@ -45,7 +45,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
 .upd button{margin-left:auto;background:#fff;color:#1769aa;border:0;border-radius:8px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}
 .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#68747d;font-size:15px}
 @media(max-width:900px){.tab{flex-direction:column;gap:2px;padding:6px 8px;font-size:11px;min-width:62px}.tab .ti{font-size:19px}}
-@media(max-width:560px){.brand,.ver{display:none}}
+@media(max-width:560px){.brand{display:none}.ver{position:fixed;right:6px;bottom:2px;font-size:10px;opacity:.55;pointer-events:none;z-index:5;padding:0}}
 
 .login{position:fixed;inset:0;z-index:30;background:radial-gradient(900px 600px at 80% -10%,#1f3a5f 0%,#10161b 65%);display:flex;align-items:center;justify-content:center;padding:20px}
 .login.hidden{display:none!important}
@@ -70,7 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-app="home" data-name="Home" id="t-home"><span class="ti">🏠</span><span class="tl">Home</span></button><button class="tab" role="tab" data-app="job" data-name="Job Sheet" id="t-job"><span class="ti">📋</span><span class="tl">Job Sheet</span></button><button class="tab" role="tab" data-app="kepo" data-name="KEPO" id="t-kepo"><span class="ti">🧾</span><span class="tl">KEPO</span></button><button class="tab" role="tab" data-app="service" data-name="Service" id="t-service"><span class="ti">🛠️</span><span class="tl">Service</span></button><button class="tab" role="tab" data-app="parts" data-name="Parts List" id="t-parts"><span class="ti">🔩</span><span class="tl">Parts List</span></button><button class="tab" role="tab" data-app="quote" data-name="Quote" id="t-quote"><span class="ti">💬</span><span class="tl">Quote</span></button><button class="tab" role="tab" data-app="ra" data-name="Risk Assess" id="t-ra"><span class="ti">⚠️</span><span class="tl">Risk Assess</span></button><button class="tab" role="tab" data-app="lt" data-name="Load Test" id="t-lt"><span class="ti">📏</span><span class="tl">Load Test</span></button><button class="tab" role="tab" data-app="jobs" data-name="My Jobs" id="t-jobs"><span class="ti">📅</span><span class="tl">My Jobs</span></button><button class="tab" role="tab" data-app="game" data-name="Crane Challenge" id="t-game"><span class="ti">🎮</span><span class="tl">Crane Challenge</span></button></div>
   <button class="bell hidden" id="acct" aria-label="Account">👤</button>
   <button class="bell hidden" id="bell" title="Urgent order alerts on this device" aria-label="Urgent order alerts">🔔</button>
-  <div class="ver" id="ver">v2026.11.21-1132</div>
+  <div class="ver" id="ver">v2026.11.22-2153</div>
 </div>
 <div class="sub" id="sub"></div>
 <div class="upd hidden" id="upd" role="status"><span>A new version of Key App is ready.</span><button id="updBtn">Update now</button><button id="updX" aria-label="Dismiss" style="margin-left:0;background:transparent;color:#fff;font-size:18px;padding:4px 8px">&times;</button></div>
@@ -161,7 +161,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-s
   show(start||'home');
 
   /* ---------- version check ---------- */
-  var BUILD="2026.11.21-1132";
+  var BUILD="2026.11.22-2153";
   var newBuild='';
   function checkVersion(){
     fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
